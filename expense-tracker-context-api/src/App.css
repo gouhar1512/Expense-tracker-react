@@ -1,0 +1,24 @@
+body {
+  background-color: #f7f7f7;
+}
+.App {
+  margin: 0 auto;
+  text-align: center;
+  /* border: 1px solid black; */
+  width: 200px;
+  padding: 5px 20px;
+}
+
+.history {
+  border-bottom: 1px solid black;
+  margin-bottom: 10px;
+}
+.balance {
+  border-bottom: 1px solid black;
+  margin-bottom: 10px;
+}
+
+.list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}

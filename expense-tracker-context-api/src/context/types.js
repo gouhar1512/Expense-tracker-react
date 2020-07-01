@@ -1,0 +1,6 @@
+export const ADD_TRANSACTION = "ADD_TRANSACTION";
+export const REMOVE_ITEM = "REMOVE_ITEM";
+export const SET_INCOME = "SET_INCOME";
+export const SET_EXPENSE = "SET_EXPENSE";
+export const SET_BALANCE = "SET_BALANCE";
+export const SET_TRANS_HISTORY = "SET_TRANS_HISTORY";
