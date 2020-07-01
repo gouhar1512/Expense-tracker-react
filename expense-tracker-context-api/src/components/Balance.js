@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
+import ExpenseContext from "../context/expenseContext";
 
-const Balance = ({ balance, income, expense }) => {
+const Balance = () => {
+  const expenseContext = useContext(ExpenseContext);
+
+  const { balance, income, expense } = expenseContext;
   return (
     <div className="balance">
       <div>
@@ -13,7 +17,7 @@ const Balance = ({ balance, income, expense }) => {
       </div>
       <div>
         <b>Expense</b>
-        <span className="expense"> {expense}</span>
+        <span className="expense"> {Math.abs(expense)}</span>
       </div>
     </div>
   );

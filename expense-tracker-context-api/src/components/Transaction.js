@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import ExpenseContext from "../context/expenseContext";
 
 const Transaction = (props) => {
   const [text, setText] = useState("");
   const [price, setPrice] = useState("");
+
+  const expenseContext = useContext(ExpenseContext);
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -11,8 +14,8 @@ const Transaction = (props) => {
       alert("Please enter item and price both");
       return;
     }
+    expenseContext.addTransaction(text, parseInt(price));
 
-    props.addTransaction({ text, price });
     setText("");
     setPrice("");
   };
@@ -20,7 +23,7 @@ const Transaction = (props) => {
   const onChange = (e) => {
     const value = e.target.value;
     if (e.target.name === "text") setText(value);
-    else if (e.target.name === "price") setPrice(parseInt(value));
+    else if (e.target.name === "price") setPrice(value);
   };
 
   return (

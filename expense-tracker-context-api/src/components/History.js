@@ -1,13 +1,16 @@
-import React from "react";
+import React, { useContext } from "react";
+import ExpenseContext from "../context/expenseContext";
 import ListItem from "./ListItem";
 
-const History = (props) => {
-  const { removeItem, transHistory } = props;
+const History = () => {
+  const expenseContext = useContext(ExpenseContext);
+
+  const { transHistory } = expenseContext;
   return (
     <div className="history" style={{ overflow: "auto", maxHeight: "200px" }}>
       <b>History</b>
       {transHistory.map((item) => (
-        <ListItem key={item.id} item={item} removeItem={removeItem} />
+        <ListItem key={item.id} item={item} />
       ))}
     </div>
   );

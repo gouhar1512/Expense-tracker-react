@@ -1,13 +1,18 @@
-import React, { useReducer } from "react";
+import React, { useReducer, useEffect } from "react";
 import ExpenseContext from "./expenseContext";
 import ExpenseReducer from "./expenseReducer";
-import { SET_TRANS_HISTORY } from "./types";
 
-const ADD_TRANSACTION = "ADD_TRANSACTION";
-const REMOVE_ITEM = "REMOVE_ITEM";
+import {
+  ADD_TRANSACTION,
+  REMOVE_ITEM,
+  SET_INCOME,
+  SET_EXPENSE,
+  SET_BALANCE,
+  SET_TRANS_HISTORY,
+} from "./types";
 
 const ExpenseState = (props) => {
-  const initialState = {
+  let initialState = {
     text: "",
     price: 0,
     balance: 0,
@@ -16,15 +21,18 @@ const ExpenseState = (props) => {
     transHistory: [],
   };
 
-  const [state, dispatch] = useReducer(ExpenseReducer, initialState);
+  let [state, dispatch] = useReducer(ExpenseReducer, initialState);
 
-  const addTransaction = () => {
+  let { text, price, balance, income, expense, transHistory } = state;
+
+  const addTransaction = (text2, price2) => {
+    text = text2;
+    price = price2;
     if (price >= 0) {
       setIncome();
     } else {
       setExpense();
     }
-
     let updatedHistory = [...transHistory];
     updatedHistory.push({
       id: Date.now(),
@@ -32,7 +40,11 @@ const ExpenseState = (props) => {
       price: price,
     });
 
-    setTransHistory();
+    setTransHistory(updatedHistory);
+    dispatch({
+      type: ADD_TRANSACTION,
+      payload: transHistory,
+    });
   };
 
   const removeItem = (e) => {
@@ -40,53 +52,84 @@ const ExpenseState = (props) => {
     let updatedHistory = [...transHistory];
 
     for (let i = 0; i < updatedHistory.length; i++) {
+      let currPrice = updatedHistory[i].price;
       if (updatedHistory[i].id == targetItem) {
-        if (updatedHistory[i].price < 0) {
-          price = -updatedHistory[i].price;
+        if (currPrice < 0) {
+          price = -currPrice;
           setExpense();
         } else {
-          price = updatedHistory[i].price;
+          price = -currPrice;
           setIncome();
         }
         updatedHistory.splice(i, 1);
+
+        setTransHistory(updatedHistory);
+
         break;
       }
     }
 
-    useEffect(() => {
-      setBalance();
-    }, [income, expense]);
-
-    const setIncome = () => {
-      dispatch({
-        type: SET_INCOME,
-        payload: income + price,
-      });
-    };
-
-    const setExpense = () => {
-      dispatch({
-        type: SET_EXPENSE,
-        payload: expense - price,
-      });
-    };
-
-    const setBalance = () => {
-      dispatch({
-        type: SET_BALANCE,
-        payload: income - expense,
-      });
-    };
-
-    const setTransHistory = () => {
-      dispatch({
-        type: SET_TRANS_HISTORY,
-        payload: updatedHistory,
-      });
-    };
-
-    /*eslint eqeqeq: 0*/
-
-    setTransHistory(updatedHistory);
+    dispatch({
+      type: REMOVE_ITEM,
+      payload: transHistory,
+    });
   };
+
+  useEffect(() => {
+    setBalance();
+  }, [income, expense]);
+
+  // eslint-disable-next-line
+  const setIncome = () => {
+    income += price;
+    dispatch({
+      type: SET_INCOME,
+      payload: income,
+    });
+  };
+
+  const setExpense = () => {
+    expense += price;
+    dispatch({
+      type: SET_EXPENSE,
+      payload: expense,
+    });
+  };
+
+  const setBalance = () => {
+    balance = income + expense;
+    dispatch({
+      type: SET_BALANCE,
+      payload: balance,
+    });
+  };
+
+  const setTransHistory = (updatedHistory) => {
+    transHistory = [...updatedHistory];
+    dispatch({
+      type: SET_TRANS_HISTORY,
+      payload: updatedHistory,
+    });
+  };
+
+  /*eslint eqeqeq: 0*/
+
+  return (
+    <ExpenseContext.Provider
+      value={{
+        text: text,
+        price: price,
+        balance: balance,
+        income: income,
+        expense: expense,
+        transHistory: transHistory,
+        addTransaction,
+        removeItem,
+      }}
+    >
+      {props.children}
+    </ExpenseContext.Provider>
+  );
 };
+
+export default ExpenseState;
